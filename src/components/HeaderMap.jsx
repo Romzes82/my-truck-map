@@ -1,11 +1,20 @@
 import React from 'react';
+import Trucks from './Trucks';
+import Calculator from './Calculator';
 
-const FooterMap = () => {
+const HeaderMap = (props) => {
+    const { quantity = 0, handleModalTrucksShow = Function.prototype } = props;
     return (
         <>
-            <div className="footer_center_side">
-                <div>1000 | 2.4 | 1</div>
-                <form>
+            <div className="header_center_side">
+                <Calculator />
+                {/* <div> */}
+                <Trucks
+                    quantity={quantity}
+                    handleModalTrucksShow={handleModalTrucksShow}
+                />
+                {/* </div> */}
+                {/* <form>
                     <label htmlFor="city-select">.</label>
                     <select name="city" id="city-select">
                         <option value="">-- Удалить авто --</option>
@@ -19,10 +28,10 @@ const FooterMap = () => {
                             авто 3: (4-7-9)
                         </option>
                     </select>
-                </form>
+                </form> */}
             </div>
         </>
     );
 };
 
-export default FooterMap;
+export default HeaderMap;

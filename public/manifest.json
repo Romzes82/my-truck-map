@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "React Map App 1.0",
+  "name": "Truck routes on the map",
   "icons": [
     {
       "src": "favicon.ico",

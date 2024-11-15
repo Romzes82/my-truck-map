@@ -10,9 +10,9 @@ const LeftSide = (props) => {
           <hr />
           {data.map((item, index) => (
               <div className="card" key={index}>
-                  <div>{item.номер}</div>
-                  <div>{item.адрес}</div>
-                  <div>{item.клиент}</div>
+                  <div>{item.id}</div>
+                  <div>{item.client}</div>
+                  {/* <div>{item.клиент}</div> */}
                   <hr />
               </div>
           ))}

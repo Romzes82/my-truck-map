@@ -1,6 +1,6 @@
 // import data from "./data.json"
 import React, { useState, useEffect } from 'react';
-import Content from './Content';
+import Content from './components/Content';
 
 function App() {
  const [data, setData] = useState([]);
