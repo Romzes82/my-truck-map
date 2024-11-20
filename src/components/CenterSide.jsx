@@ -35,32 +35,12 @@ const mok = [
 const mok_pointsSelected = [1, 2];
 
 const CenterSide = (props) => {
-    // const {
-    //     номер: id,
-    //     широта: latitude,
-    //     долгота: longitude,
-    //     масса: weight,
-    //     объем: value,
-    //     паллеты: pallet,
-    //     информация: info,
-    //     тип: type,
-    //     адрес: address,
-    //     клиент: client,
-    // } = props;
+ 
     const { data } = props;
 
 //    data - это массив:
 //    console.log(Array.isArray(data));
      
-// добавим каждому объекту массива поле preset с цветом метки
-    data.forEach((point) => { 
-        if (point['type'] === "Москва и область") {
-            point['preset'] = 'islands#blueIcon';
-        } else { 
-            point['preset'] = 'islands#redIcon';
-        }
-    })
-
     // https://www.mousedc.ru/learning/522-massiv-steyt-react/?ysclid=m3hcvf4nps534188601
     const [isLoadedScriptApi, setIsLoadedScriptApi] = useState(false);
     // const [pointsSelected, SetPointsSelected] = useState([]); // состояние-массив точек для отпраки в одну авто? - просто [1, 5, 10]
@@ -221,46 +201,11 @@ const CenterSide = (props) => {
                     )
                         return;
 
-                    // let arrStr = '';
-                    let IdTemp = e.target.parentElement.parentElement.id;
-                    // console.log(e.button + IdTemp);
+                    const IdTemp = e.target.parentElement.parentElement.id;
                     const arrStr = document
                         .getElementById(IdTemp)
                         .getElementsByTagName('span')[0].textContent;
-                    // console.log(arrStr);
-                        
-                    // console.log(
-                    //     'callbackForTruckDelete ' +
-                    //         e.target.parentElement.parentElement.id
-                    // );
 
-                    // const e_id = e.target.parentElement.parentElement.id;
-                    // const div_el = document.getElementById(e_id);
-                    //  const a = e.target.parentElement.parentElement.getElementsByTagName(
-                    //      'span'
-                    //  )[0].textContent;
-                    // collection-item-
-                    // console.log('class ' + cl);
-                    // let arrStr='';
-                    // try {
-                    //     const a =
-                    //         e.target.parentElement.parentElement.getElementsByTagName(
-                    //             'span'
-                    //         )[0].textContent;
-                    //     if (cl === 'material-icons truck-delete') {
-                    //         // alert(e_id);
-                    //         // const div_el = document.getElementById(e_id);
-                    //         // alert(
-                    //         //     a
-                    //         // );
-                    //         //получим строку меток в удаляемой авто и преобразуем в массив
-                    //         arrStr =
-                    //             a
-                    //             // div_el.getElementsByTagName('span')[0]
-                    //             //     .textContent;
-                    //             // e.target.parentElement.parentElement.getElementsByTagName(
-                    //             //     'span'
-                    //             // )[0].textContent;
                             const arr = arrStr.split(',');
                             // сортировка т.к. будем иметь дело с итератором от 1 до ...
                             arr.sort();
@@ -273,29 +218,15 @@ const CenterSide = (props) => {
                                     (object = iterator.getNext()) !==
                                     iterator.STOP_ITERATION
                                 ) {
-                                    // alert(
-                                    //     "point " + object.geometry.getType() + ", " + element + "===" +
-                                    //         object.properties.get('iconContent')
-                                    // );
                                     if (
-                                        // true
-                                         object.geometry.getType() === 'Point' &&
-                                        // object.options.get('preset') === 'islands#redIcon'
+                                        object.geometry.getType() === 'Point' &&
                                         element === object.properties.get('iconContent')
                                     ) {
-                                        let tempPreset = data[element]['preset']; //object.options.get('preset');
-                                        // alert(tempPreset);
-                                        console.log(
-                                            'done ' +
-                                            object.properties.get(
-                                                'iconContent'
-                                            ) +
-                                            ', el =' +
-                                            element
-                                        );
+                                        let tempPreset = data[element-1]['preset']; //object.options.get('preset');
                                         object.options.set(
                                             'preset',
                                             tempPreset
+                                            // data[element]['preset']
                                         );
                                         object.properties._data.activeFlag = false;
                                         // alert(object.options.get('preset'));
@@ -304,18 +235,11 @@ const CenterSide = (props) => {
                                 }
                             })
                             subscribePlacemarkClick(arr);
-                    //     };
-                    // } catch (error) {
-                    //     // arr = '';
-                    //     // console.log(error);
-                    //     return;
-                    // }
                 };
 
                 // найдем на странице списки левый и правый
                 let listLeft =
                     document.getElementsByClassName('myListDeliveryLeft');
-                // console.log(listLeft);
                 // document.addEventListener('click', () => callback(['3', '5']));
                 document.addEventListener('mousedown', (e) => {
                     callbackForTruckDelete(e);
@@ -338,20 +262,10 @@ const CenterSide = (props) => {
                         li.innerText =
                             '- ' + data[i]['id'] + ') ' + data[i]['address'];
                         li.title = data[i]['client'];
-                        // li.dataset.preset = 'islands#blueIcon';
-                        // eslint-disable-next-line no-loop-func
-                        // li.addEventListener('click', () => callback(['3','5']));
-                        // li.addEventListener('click', function (e) {
-                        //     console.log(e.target);
-                        //     // varPreset = e.target.dataset['preset'];
-                        //     varPreset = 'islands#redIcon';
-                        // });
-                        // console.log(li);
                         listLeft[0].appendChild(li);
                         listLeft[0].appendChild(hr);
                         varForBalloonContentBodyAndHintContent =
                             data[i]['client'];
-                        // varPreset = li.dataset['preset'];
                     } else {
                         const li = document.createElement('li');
                         const hr = document.createElement('hr');
@@ -366,25 +280,19 @@ const CenterSide = (props) => {
                     }
                 }
 
-                // let varPreset;
+
                 // let varForBalloonContentBodyAndHintContent;
                 // заполнение меток совйствами и складывание их в колллекцию
                 for (let i = 0; i < data.length; i++) {
                     if (data[i]['type'] === 'Москва и область') {
                         varForBalloonContentBodyAndHintContent =
                         data[i]['client'];
-                        varPreset = 'islands#blueIcon';
-                        // console.log(firstItem.dataset);
-                        // varPreset = li.dataset["preset"];
                     } else {
                         varForBalloonContentBodyAndHintContent =
                             data[i]['type'];
-                        varPreset = 'islands#redIcon';
                     }
                     myCollection.add(
                         new window.ymaps.Placemark(
-                            // [13.38, 52.51]
-                            // console.log(data[i]['широта'].replace(/\,/g, '.'))
                             [
                                 data[i]['latitude'].replace(/,/g, '.'),
                                 data[i]['longitude'].replace(/,/g, '.'),
@@ -431,10 +339,10 @@ const CenterSide = (props) => {
                             },
                             {
                                 preset: data[i]['preset'],
-                                // preset: () => cb(),
                             }
                         )
                     );
+                    console.log(i, data[i]['preset']);
                 }
 
                 // сюда еще повесим калькулятор
@@ -516,13 +424,6 @@ const CenterSide = (props) => {
                         });
                 };
 
-                // const hendleClickPlacemark = (e) => { 
-                //     console.log(e.get('target'));
-                //     pointsSelected.push(
-                //         e.get('target').properties._data.iconContent
-                //     );
-                // }
-
                 // стартовая инициализация подписки всех меток коллекции
                 const lengthCol = myCollection.getLength();
                 (() => { 
@@ -537,28 +438,6 @@ const CenterSide = (props) => {
                 // TEST- done ---------------------------------------------
                 function hendleClickPlacemark(e) {
                     let object = e.get('target');
-
-                    // console.log(
-                    //     '123' + e.get('target').options._options.preset
-                    // );
-
-                    // if (
-                    //     e.get('target').options._options.preset ===
-                    //     'islands#grayCircleIcon'
-                    //     // object.properties._data.activeFlag === true
-                    // ) {
-                    //     console.log(
-                    //         'asd ' + e.get('target').options._options.preset,
-                    //         e.get('target').properties._data.activeFlag
-                    //     );
-
-                    //     // e.get('target').options.set(
-                    //     //     'preset',
-                    //     //     'islands#grayCircleIcon'
-                    //     // );
-                    //     // e.get('target').properties._data.activeFlag = true;
-                    //     return;
-                    // }
 
                     if (!object.properties._data.activeFlag) {
                         operand = 1;
@@ -601,23 +480,6 @@ const CenterSide = (props) => {
 
                     // массив для сбора выбранных меток в массив
                     pointsSelected.push(object.properties._data.iconContent);
-                    // SetPointsSelected(
-                    //     // ...pointsSelected,
-                    //     // pointsSelected.push([object.properties._data.iconContent])
-                    // [...pointsSelected, object.properties._data.iconContent]
-                    //     (pointsSelected) => [
-                    //         ...pointsSelected,
-                    //         object.properties._data.iconContent,
-                    //     ]
-                    // );
-
-                    //  console.log( object.geometry.getType());
-                    //  console.log( object.geometry._map.balloon._balloon._state);
-                    //console.log( object.properties._data.balloonContent );
-                    //console.log( object.options._parent._options.preset );
-                    // txt =  object.properties._data.hintContent;
-                    //log.innerHTML = '@' + e.get('type')  + txt + '<br/>' + log.innerHTML;
-                    //sum_kg = sum_kg + object.properties._data.weight;
 
                     if (object.properties._data.activeFlag === true) {
                         object.properties._data.activeFlag = false;
@@ -633,48 +495,7 @@ const CenterSide = (props) => {
                         object.properties._data.activeFlag = true;
                         object.options.set('preset', 'islands#nightCircleIcon');
                     }
-
-                    // if (object.properties._data.activeFlag === true) {
-                    //     // sum_kg = sum_kg - object.properties._data.weight;
-                    //     // sum_kub = sum_kub - object.properties._data.volume;
-                    //     // sum_kub = +sum_kub.toFixed(1);
-                    //     // sum_pal = sum_pal - object.properties._data.pallet;
-                    //     object.properties._data.activeFlag = false;
-                    //     if (
-                    //         object.properties._data.typeDelivery ===
-                    //         'Москва и область'
-                    //     ) {
-                    //         //object.options._options.iconColor='#0095b6';
-                    //         //object.options._options.preset= 'islands#redIcon';
-                    //         e.get('target').options.set(
-                    //             'preset',
-                    //             'islands#blueIcon'
-                    //         );
-                    //     } else {
-                    //         //object.options._options.iconColor='#FF4500';
-                    //         //object.options._options.preset= 'islands#redIcon';
-                    //         e.get('target').options.set(
-                    //             'preset',
-                    //             'islands#redIcon'
-                    //         );
-                    //     }
-                    // } else {
-                    //     // sum_kg = sum_kg + object.properties._data.weight;
-                    //     // sum_kub = sum_kub + object.properties._data.volume;
-                    //     // sum_kub = +sum_kub.toFixed(1);
-                    //     // sum_pal = sum_pal + object.properties._data.pallet;
-                    //     object.properties._data.activeFlag = true;
-                    //     //object.options._options.iconColor="#0005b6";
-                    //     //object.options._options.preset= 'islands#greyIcon';
-                    //     e.get('target').options.set(
-                    //         'preset',
-                    //         'islands#nightCircleIcon'
-                    //     ); //'islands#blackIcon'); //  это работает - закараска балуна при нажатии
-                    // }
                 }
-
-                // пока отключим
-                // myCollection.events.add(['click'], MyClick);
 
                 // Добавление коллекции на карту.
                 newMap.geoObjects.add(myCollection);
@@ -745,22 +566,6 @@ const CenterSide = (props) => {
                     calc[0].innerHTML = `0 кг | 0 м3 | 0 пал ( 0 м3)`;
                     // myCollection.events.remove('click', MyClick);
                 });
-
-                // var secondButton = new ymaps.control.Button({
-                //     data: {
-                //         // Зададим текст и иконку для кнопки.
-                //         content: 'Адаптивная кнопка',
-                //         // Иконка имеет размер 16х16 пикселей.
-                //         image: 'images/error.png',
-                //     },
-                //     options: {
-                //         // Поскольку кнопка будет менять вид в зависимости от размера карты,
-                //         // зададим ей три разных значения maxWidth в массиве.
-                //         maxWidth: [28, 150, 178],
-                //     },
-                // });
-
-                // setMap(newMap);
             });
         } catch (error) {
             console.log('error is', error);
@@ -800,48 +605,3 @@ const CenterSide = (props) => {
 };
 
 export default CenterSide;
-
-// let counter = 0.1;
-
-// return (
-//     <>
-//         <div className="side center_side" id="customMap">
-//             Here will be a map
-//         </div>
-
-//         <button
-//             style={{ marginTop: 150 }}
-//             onClick={() => {
-//                 console.log('ymaps', window.ymaps);
-//                 counter = counter + 0.1;
-
-//                 var myGeoObject = new window.ymaps.GeoObject({
-//                     geometry: {
-//                         type: 'Point', // тип геометрии - точка
-//                         coordinates: [55.8, 37.07 + counter], // координаты точки
-//                     },
-//                 });
-
-//                 // Размещение геообъекта на карте.
-//                 map.geoObjects.add(myGeoObject);
-//             }}
-//         >
-//             Create Point
-//         </button>
-//     </>
-// );
-
-// document.addEventListener('readystatechange', function () {
-//     if (document.readyState === 'complete') {
-//         // good luck!
-//       // console.log('React app DOM is fully loaded.');
-//       // console.log(window.ymaps);
-//       const init = () => {
-//             let myMap = new window.ymaps.Map('map', {
-//                 center: [55.76, 37.64],
-//                 zoom: 10,
-//             });
-//       };
-//        window.ymaps.ready(init);
-//     }
-// });
