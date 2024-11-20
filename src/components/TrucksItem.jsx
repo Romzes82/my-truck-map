@@ -32,7 +32,7 @@ const TrucksItem = (props) => {
     return (
         <div>
             <li className="collection-item">
-                <div>
+                <div id={`collection-item-${index+1}`}>
                     {/* {id}, {weight} кг */}
                     авто {index + 1}) точки: &nbsp;
                     <span className="red-text">

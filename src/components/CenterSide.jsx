@@ -49,6 +49,18 @@ const CenterSide = (props) => {
     // } = props;
     const { data } = props;
 
+//    data - это массив:
+//    console.log(Array.isArray(data));
+     
+// добавим каждому объекту массива поле preset с цветом метки
+    data.forEach((point) => { 
+        if (point['type'] === "Москва и область") {
+            point['preset'] = 'islands#blueIcon';
+        } else { 
+            point['preset'] = 'islands#redIcon';
+        }
+    })
+
     // https://www.mousedc.ru/learning/522-massiv-steyt-react/?ysclid=m3hcvf4nps534188601
     const [isLoadedScriptApi, setIsLoadedScriptApi] = useState(false);
     // const [pointsSelected, SetPointsSelected] = useState([]); // состояние-массив точек для отпраки в одну авто? - просто [1, 5, 10]
@@ -199,39 +211,68 @@ const CenterSide = (props) => {
                     }
                 );
 
-                // let lengthCol = myCollection.getLength();
-                const callback = (e) => {
-                    const cl = e.target.className;
-                    console.log('class ' + cl);
-                    let arrStr='';
-                    try {
-                        // console.log(
-                        //     e.target.parentElement.parentElement.getElementsByTagName(
-                        //         'span'
-                        //     )[0].textContent
-                        // );
-                        if (cl === 'material-icons truck-delete') {
-                            arrStr =
-                                e.target.parentElement.parentElement.getElementsByTagName(
-                                    'span'
-                                )[0].textContent;
-                            let arr = arrStr.split(',');
-                            // const compareFn = (a, b) => b - a;
-                            // arr.sort(compareFn);
+   
+                const callbackForTruckDelete = (e) => {
+                    if (
+                        !e.target.parentElement.parentElement.id.match(
+                            /collection-item-.*/
+                        ) ||
+                        e.button !== 0
+                    )
+                        return;
+
+                    // let arrStr = '';
+                    let IdTemp = e.target.parentElement.parentElement.id;
+                    // console.log(e.button + IdTemp);
+                    const arrStr = document
+                        .getElementById(IdTemp)
+                        .getElementsByTagName('span')[0].textContent;
+                    // console.log(arrStr);
+                        
+                    // console.log(
+                    //     'callbackForTruckDelete ' +
+                    //         e.target.parentElement.parentElement.id
+                    // );
+
+                    // const e_id = e.target.parentElement.parentElement.id;
+                    // const div_el = document.getElementById(e_id);
+                    //  const a = e.target.parentElement.parentElement.getElementsByTagName(
+                    //      'span'
+                    //  )[0].textContent;
+                    // collection-item-
+                    // console.log('class ' + cl);
+                    // let arrStr='';
+                    // try {
+                    //     const a =
+                    //         e.target.parentElement.parentElement.getElementsByTagName(
+                    //             'span'
+                    //         )[0].textContent;
+                    //     if (cl === 'material-icons truck-delete') {
+                    //         // alert(e_id);
+                    //         // const div_el = document.getElementById(e_id);
+                    //         // alert(
+                    //         //     a
+                    //         // );
+                    //         //получим строку меток в удаляемой авто и преобразуем в массив
+                    //         arrStr =
+                    //             a
+                    //             // div_el.getElementsByTagName('span')[0]
+                    //             //     .textContent;
+                    //             // e.target.parentElement.parentElement.getElementsByTagName(
+                    //             //     'span'
+                    //             // )[0].textContent;
+                            const arr = arrStr.split(',');
+                            // сортировка т.к. будем иметь дело с итератором от 1 до ...
                             arr.sort();
                             arr.forEach((element) => {
-                                
-                                element = element.trim();
                                 // Найдем в коллекции геообъект с геометрией "Ломаная линия".
                                 let iterator = myCollection.getIterator(),
                                     object;
+                                element = element.trim();
                                 while (
                                     (object = iterator.getNext()) !==
                                     iterator.STOP_ITERATION
                                 ) {
-                                    // arr.forEach((element) => {
-                                        
-                                    //  })
                                     // alert(
                                     //     "point " + object.geometry.getType() + ", " + element + "===" +
                                     //         object.properties.get('iconContent')
@@ -242,7 +283,8 @@ const CenterSide = (props) => {
                                         // object.options.get('preset') === 'islands#redIcon'
                                         element === object.properties.get('iconContent')
                                     ) {
-                                        let tempPreset = object.options.get('preset');
+                                        let tempPreset = data[element]['preset']; //object.options.get('preset');
+                                        // alert(tempPreset);
                                         console.log(
                                             'done ' +
                                             object.properties.get(
@@ -255,81 +297,28 @@ const CenterSide = (props) => {
                                             'preset',
                                             tempPreset
                                         );
-                                        
+                                        object.properties._data.activeFlag = false;
                                         // alert(object.options.get('preset'));
                                         break;
-                                    } 
+                                    }
                                 }
-                            });
-                        } else { 
-                            // return;
-                        };
-                            // } else {
-                            //     return;
-                            // }
-                        // }            
-                    } catch (error) {
-                        // arr = '';
-                        // console.log(error);
-                        return;
-                    }
+                            })
+                            subscribePlacemarkClick(arr);
+                    //     };
+                    // } catch (error) {
+                    //     // arr = '';
+                    //     // console.log(error);
+                    //     return;
+                    // }
                 };
-
-                // const el = document.getElementsByClassName(
-                //     'collection-header'
-                // );
-                // console.log(el[0]);
-                // const el = document.getElementsByClassName('truck-delete');
-                // el[0].addEventListener('click', () => callback('3'));
-
-                // let iterator = myCollection.getIterator();
-                // let lengthCol = myCollection.getLength();
-                // let obj;
-                // let tempPreset;
-
-                // const cb = (id) => {
-                //     let obj;
-                //     while ((obj = iterator.getNext())) {
-                //         if (obj.geometry.getType() === 'Point') {
-                //             console.log(obj.geometry.getType());
-                //             let tempPreset = obj.options.get('preset');
-                //             console.log(obj.properties.get('iconContent'));
-                //             console.log(tempPreset);
-                //             obj.options.set('preset', 'islands#redIcon');
-                //             return;
-                //         } else {
-                //         }
-                //         // if (obj.geometry.getType() == 'Point') {
-                //         //     //console.log(obj.geometry.getType());
-                //         //     //let tempPreset = obj.options.get('preset');
-                //         //     //console.log(obj.properties.get('iconContent'));
-                //         //     if (
-                //         //         obj.properties.get(
-                //         //             'iconContent'
-                //         //         ) == rezNum
-                //         //     ) {
-                //         //         //  console.log(obj.properties.get('iconContent'));
-                //         //         tempPreset =
-                //         //             obj.options.get('preset');
-                //         //         obj.options.set(
-                //         //             'preset',
-                //         //             getTempPreset()
-                //         //         );
-                //         //         //alert("AAAAA");
-                //         //         break;
-                //         //     }
-                //         // } else {
-                //         // }
-                //     }
-                // };
 
                 // найдем на странице списки левый и правый
                 let listLeft =
                     document.getElementsByClassName('myListDeliveryLeft');
                 // console.log(listLeft);
                 // document.addEventListener('click', () => callback(['3', '5']));
-                document.addEventListener('click', (e) => {
-                    callback(e);
+                document.addEventListener('mousedown', (e) => {
+                    callbackForTruckDelete(e);
                 });
                 let listRight = document.getElementsByClassName(
                     'myListDeliveryRight'
@@ -338,16 +327,18 @@ const CenterSide = (props) => {
 
                 let varPreset;
                 let varForBalloonContentBodyAndHintContent;
-
+    
+                //заполняем левый и правый списки
                 for (let i = 0; i < data.length; i++) {
                     if (data[i]['type'] === 'Москва и область') {
-                        let li = document.createElement('li');
+                        const li = document.createElement('li');
+                        const hr = document.createElement('hr');
 
                         li.setAttribute('tabindex', '0');
                         li.innerText =
                             '- ' + data[i]['id'] + ') ' + data[i]['address'];
                         li.title = data[i]['client'];
-                        li.dataset.preset = 'islands#greenIcon';
+                        // li.dataset.preset = 'islands#blueIcon';
                         // eslint-disable-next-line no-loop-func
                         // li.addEventListener('click', () => callback(['3','5']));
                         // li.addEventListener('click', function (e) {
@@ -357,27 +348,32 @@ const CenterSide = (props) => {
                         // });
                         // console.log(li);
                         listLeft[0].appendChild(li);
-
+                        listLeft[0].appendChild(hr);
                         varForBalloonContentBodyAndHintContent =
                             data[i]['client'];
-                        varPreset = li.dataset['preset'];
+                        // varPreset = li.dataset['preset'];
                     } else {
-                        let li = document.createElement('li');
+                        const li = document.createElement('li');
+                        const hr = document.createElement('hr');
                         li.setAttribute('tabindex', '0');
                         li.innerText =
                             '- ' + data[i]['id'] + ') ' + data[i]['address'];
                         li.title = data[i]['info'];
                         listRight[0].appendChild(li);
+                        listRight[0].appendChild(hr);
+                        varForBalloonContentBodyAndHintContent =
+                            data[i]['type'];
                     }
                 }
 
                 // let varPreset;
                 // let varForBalloonContentBodyAndHintContent;
+                // заполнение меток совйствами и складывание их в колллекцию
                 for (let i = 0; i < data.length; i++) {
                     if (data[i]['type'] === 'Москва и область') {
-                        // varForBalloonContentBodyAndHintContent =
-                        // data[i]['client'];
-                        // varPreset = 'islands#blueIcon';
+                        varForBalloonContentBodyAndHintContent =
+                        data[i]['client'];
+                        varPreset = 'islands#blueIcon';
                         // console.log(firstItem.dataset);
                         // varPreset = li.dataset["preset"];
                     } else {
@@ -407,6 +403,7 @@ const CenterSide = (props) => {
                                     '<address>',
                                     '<strong>' + data[i]['info'] + '</strong>',
                                     '<br/>',
+                                    '<hr/>',
                                     '' +
                                         data[i]['weight'] +
                                         ' кг, ' +
@@ -416,11 +413,13 @@ const CenterSide = (props) => {
                                         ' паллет' +
                                         '',
                                     '<br/>',
+                                    '<hr/>',
                                     '' +
                                         varForBalloonContentBodyAndHintContent +
                                         '',
                                     '</address>',
                                 ].join(''),
+                                volumeInPallet: data[i]['volumeInPallet'],
                                 weight: data[i]['weight'],
                                 volume: data[i]['volume'],
                                 pallet: data[i]['pallet'],
@@ -431,36 +430,176 @@ const CenterSide = (props) => {
                                     varForBalloonContentBodyAndHintContent,
                             },
                             {
-                                preset: varPreset,
+                                preset: data[i]['preset'],
                                 // preset: () => cb(),
                             }
                         )
                     );
                 }
 
-                //                 let iterator = myCollection.getIterator();
-                //                 let lengthCol = myCollection.getLength();
-
-                //                 const hendleLi = (e) => {
-
-                //                 let obj;
-                //                 let tempPreset;
-
-                // //                console.log("lengthCol - " + lengthCol);
-                //                     while (obj = iterator.getNext()) {
-
-                //                     }
-                //                 }
-
                 // сюда еще повесим калькулятор
                 // myCollection.events.add(['click'], asd);
-                //добавлеяем слушателей на коллекцию
-                myCollection.events.add(['click'], function (e) {
-                    let object = e.get('target');
-                    console.log(object.properties._data.iconContent);
+                //добавлеяем колбэк слушателя на коллекцию это для калькуляции и окраску+флаг активных меток
+                const calc = document.getElementsByClassName('calculator');
+                
+                let sum_kg = 0;
+                let sum_kub = 0;
+                let sum_pal = 0;
+                let sum_val_in_pal = 0;
+                let operand;
 
+                const subscribePlacemarkClick = (numbersOfPoints) => {
+                                        numbersOfPoints
+                                            .sort()
+                                            .forEach((element) => {
+                                                // Найдем в коллекции геообъект с геометрией "Point".
+                                                let iterator =
+                                                        myCollection.getIterator(),
+                                                    object;
+                                                element = element.trim();
+                                                while (
+                                                    (object =
+                                                        iterator.getNext()) !==
+                                                    iterator.STOP_ITERATION
+                                                ) {
+                                                    if (
+                                                        // true
+                                                        object.geometry.getType() ===
+                                                            'Point' &&
+                                                        // object.options.get('preset') === 'islands#redIcon'
+                                                        element ===
+                                                            object.properties.get(
+                                                                'iconContent'
+                                                            )
+                                                    ) {
+                                                        object.events.add(['click'], hendleClickPlacemark)
+                                                        // alert(object.options.get('preset'));
+                                                        break;
+                                                    }
+                                                }
+                                            });
+                }
+
+                const UnSubscribePlacemarkClick = (
+                    numbersOfPoints
+                ) => {
+                    numbersOfPoints
+                        .sort()
+                        .forEach((element) => {
+                            // Найдем в коллекции геообъект с геометрией "Point".
+                            let iterator =
+                                    myCollection.getIterator(),
+                                object;
+                            element = element.trim();
+                            while (
+                                (object =
+                                    iterator.getNext()) !==
+                                iterator.STOP_ITERATION
+                            ) {
+                                if (
+                                    // true
+                                    object.geometry.getType() ===
+                                        'Point' &&
+                                    // object.options.get('preset') === 'islands#redIcon'
+                                    element ===
+                                        object.properties.get(
+                                            'iconContent'
+                                        )
+                                ) {
+                                    object.events.remove(
+                                        'click',
+                                        hendleClickPlacemark
+                                    );
+                                    break;
+                                }
+                            }
+                        });
+                };
+
+                // const hendleClickPlacemark = (e) => { 
+                //     console.log(e.get('target'));
+                //     pointsSelected.push(
+                //         e.get('target').properties._data.iconContent
+                //     );
+                // }
+
+                // стартовая инициализация подписки всех меток коллекции
+                const lengthCol = myCollection.getLength();
+                (() => { 
+                    let tempArr =[];
+                    for (let i = 1; i <= lengthCol; i++) { 
+                        tempArr.push("" + i)
+                    }
+                    subscribePlacemarkClick(tempArr);
+                })()
+
+
+                // TEST- done ---------------------------------------------
+                function hendleClickPlacemark(e) {
+                    let object = e.get('target');
+
+                    // console.log(
+                    //     '123' + e.get('target').options._options.preset
+                    // );
+
+                    // if (
+                    //     e.get('target').options._options.preset ===
+                    //     'islands#grayCircleIcon'
+                    //     // object.properties._data.activeFlag === true
+                    // ) {
+                    //     console.log(
+                    //         'asd ' + e.get('target').options._options.preset,
+                    //         e.get('target').properties._data.activeFlag
+                    //     );
+
+                    //     // e.get('target').options.set(
+                    //     //     'preset',
+                    //     //     'islands#grayCircleIcon'
+                    //     // );
+                    //     // e.get('target').properties._data.activeFlag = true;
+                    //     return;
+                    // }
+
+                    if (!object.properties._data.activeFlag) {
+                        operand = 1;
+                    } else {
+                        operand = -1;
+                    }
+                    let rez = '';
+                    calc[0].innerHTML = '';
+
+                    console.log(object.properties._data.activeFlag);
+                    console.log(object.properties._data.iconContent);
+                    //если флаг активный, то суммируем
+                    sum_kg = sum_kg + object.properties._data.weight * operand;
+                    sum_kub =
+                        sum_kub +
+                        object.properties._data.volume.replace(/,/g, '.') *
+                            operand;
+                    sum_kub = sum_kub.toFixed(1) * 1;
+                    sum_pal =
+                        sum_pal + object.properties._data.pallet * operand;
+                    sum_val_in_pal =
+                        sum_val_in_pal +
+                        object.properties._data.volumeInPallet.replace(
+                            /,/g,
+                            '.'
+                        ) *
+                            operand;
+                    sum_val_in_pal = sum_val_in_pal.toFixed(1) * 1;
+                    console.log(
+                        sum_kg,
+                        sum_kub,
+                        sum_pal,
+                        '(',
+                        sum_val_in_pal,
+                        ')'
+                    );
+                    rez = `${sum_kg} кг | ${sum_kub} м3 | ${sum_pal} пал ( ${sum_val_in_pal} м3)`;
+                    calc[0].innerHTML += rez;
                     // const arr.push(object.properties._data.iconContent)
 
+                    // массив для сбора выбранных меток в массив
                     pointsSelected.push(object.properties._data.iconContent);
                     // SetPointsSelected(
                     //     // ...pointsSelected,
@@ -481,43 +620,61 @@ const CenterSide = (props) => {
                     //sum_kg = sum_kg + object.properties._data.weight;
 
                     if (object.properties._data.activeFlag === true) {
-                        // sum_kg = sum_kg - object.properties._data.weight;
-                        // sum_kub = sum_kub - object.properties._data.volume;
-                        // sum_kub = +sum_kub.toFixed(1);
-                        // sum_pal = sum_pal - object.properties._data.pallet;
                         object.properties._data.activeFlag = false;
                         if (
                             object.properties._data.typeDelivery ===
                             'Москва и область'
                         ) {
-                            //object.options._options.iconColor='#0095b6';
-                            //object.options._options.preset= 'islands#redIcon';
-                            e.get('target').options.set(
-                                'preset',
-                                'islands#blueIcon'
-                            );
+                            object.options.set('preset', 'islands#blueIcon');
                         } else {
-                            //object.options._options.iconColor='#FF4500';
-                            //object.options._options.preset= 'islands#redIcon';
-                            e.get('target').options.set(
-                                'preset',
-                                'islands#redIcon'
-                            );
+                            object.options.set('preset', 'islands#redIcon');
                         }
                     } else {
-                        // sum_kg = sum_kg + object.properties._data.weight;
-                        // sum_kub = sum_kub + object.properties._data.volume;
-                        // sum_kub = +sum_kub.toFixed(1);
-                        // sum_pal = sum_pal + object.properties._data.pallet;
                         object.properties._data.activeFlag = true;
-                        //object.options._options.iconColor="#0005b6";
-                        //object.options._options.preset= 'islands#greyIcon';
-                        e.get('target').options.set(
-                            'preset',
-                            'islands#nightCircleIcon'
-                        ); //'islands#blackIcon'); //  это работает - закараска балуна при нажатии
+                        object.options.set('preset', 'islands#nightCircleIcon');
                     }
-                });
+
+                    // if (object.properties._data.activeFlag === true) {
+                    //     // sum_kg = sum_kg - object.properties._data.weight;
+                    //     // sum_kub = sum_kub - object.properties._data.volume;
+                    //     // sum_kub = +sum_kub.toFixed(1);
+                    //     // sum_pal = sum_pal - object.properties._data.pallet;
+                    //     object.properties._data.activeFlag = false;
+                    //     if (
+                    //         object.properties._data.typeDelivery ===
+                    //         'Москва и область'
+                    //     ) {
+                    //         //object.options._options.iconColor='#0095b6';
+                    //         //object.options._options.preset= 'islands#redIcon';
+                    //         e.get('target').options.set(
+                    //             'preset',
+                    //             'islands#blueIcon'
+                    //         );
+                    //     } else {
+                    //         //object.options._options.iconColor='#FF4500';
+                    //         //object.options._options.preset= 'islands#redIcon';
+                    //         e.get('target').options.set(
+                    //             'preset',
+                    //             'islands#redIcon'
+                    //         );
+                    //     }
+                    // } else {
+                    //     // sum_kg = sum_kg + object.properties._data.weight;
+                    //     // sum_kub = sum_kub + object.properties._data.volume;
+                    //     // sum_kub = +sum_kub.toFixed(1);
+                    //     // sum_pal = sum_pal + object.properties._data.pallet;
+                    //     object.properties._data.activeFlag = true;
+                    //     //object.options._options.iconColor="#0005b6";
+                    //     //object.options._options.preset= 'islands#greyIcon';
+                    //     e.get('target').options.set(
+                    //         'preset',
+                    //         'islands#nightCircleIcon'
+                    //     ); //'islands#blackIcon'); //  это работает - закараска балуна при нажатии
+                    // }
+                }
+
+                // пока отключим
+                // myCollection.events.add(['click'], MyClick);
 
                 // Добавление коллекции на карту.
                 newMap.geoObjects.add(myCollection);
@@ -527,7 +684,66 @@ const CenterSide = (props) => {
 
                 // const log = document.getElementById('log');
                 rightButton.events.add('click', () => {
+                    pointsSelected.sort().forEach(
+                        (element) => {
+                                                        // Найдем в коллекции геообъект с геометрией "Point".
+                                                        let iterator =
+                                                                myCollection.getIterator(),
+                                                            object;
+                                                        element =
+                                                            element.trim();
+                                                        while (
+                                                            (object =
+                                                                iterator.getNext()) !==
+                                                            iterator.STOP_ITERATION
+                                                        ) {
+                                                            // alert(
+                                                            //     "point " + object.geometry.getType() + ", " + element + "===" +
+                                                            //         object.properties.get('iconContent')
+                                                            // );
+                                                            if (
+                                                                // true
+                                                                object.geometry.getType() ===
+                                                                    'Point' &&
+                                                                // object.options.get('preset') === 'islands#redIcon'
+                                                                element ===
+                                                                    object.properties.get(
+                                                                        'iconContent'
+                                                                    )
+                                                            ) {
+                                                                // let tempPreset =
+                                                                //     data[
+                                                                //         element
+                                                                //     ]['preset']; //object.options.get('preset');
+                                                                // alert(
+                                                                //     tempPreset
+                                                                // );
+                                                                console.log(
+                                                                    'done ' +
+                                                                        object.properties.get(
+                                                                            'iconContent'
+                                                                        ) +
+                                                                        ', el =' +
+                                                                        element
+                                                                );
+                                                                object.options.set(
+                                                                    'preset',
+                                                                    'islands#grayCircleIcon'
+                                                                );
+                                                                // alert(object.options.get('preset'));
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                    );
+                    UnSubscribePlacemarkClick(pointsSelected);
                     addTruck(pointsSelected);
+                    sum_kg = 0;
+                    sum_kub = 0;
+                    sum_pal = 0;
+                    sum_val_in_pal = 0;
+                    calc[0].innerHTML = `0 кг | 0 м3 | 0 пал ( 0 м3)`;
+                    // myCollection.events.remove('click', MyClick);
                 });
 
                 // var secondButton = new ymaps.control.Button({

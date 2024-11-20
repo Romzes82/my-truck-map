@@ -1,11 +1,9 @@
 import React from 'react'
 
 const Calculator = () => {
-  return (
-    <div>
-       1000 | 2.4 | 1 
-    </div>
-  )
+  return <div className="calculator">
+    0 кг | 0 м3 | 0 пал ( 0 м3)
+  </div>;
 }
 
 export default Calculator

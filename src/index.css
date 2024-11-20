@@ -36,6 +36,8 @@ body {
   height: 100%;
   flex: 15;
   padding: 2px;
+  color: #0e284a;
+  font-weight: 400;
 }
 
 .center_side {
@@ -136,4 +138,8 @@ body {
 
 .truck-delete {
    cursor: pointer;
+}
+
+.calculator {
+  font-weight: 600;
 }
