@@ -249,16 +249,21 @@ const CenterSide = (props) => {
                 );
 
 
-                let varPreset;
                 let varForBalloonContentBodyAndHintContent;
     
                 //заполняем левый и правый списки
                 for (let i = 0; i < data.length; i++) {
-                    if (data[i]['type'] === 'Москва и область') {
-                        const li = document.createElement('li');
-                        const hr = document.createElement('hr');
+                    const li = document.createElement('li');
+                    li.id = i+1
+                    const hr = document.createElement('hr');
+                    li.setAttribute('tabindex', '0');
+                    li.addEventListener('focus', (e) => hendleFocusLi(e));
+                    li.addEventListener('blur', (e) => hendleUnFocusLi(e));
+                    // пока отключил из-за конфликта закрашиваний
+                    // li.addEventListener('mouseover', (e) => hendleFocusLi(e));
+                    // li.addEventListener('mouseout', (e) => hendleUnFocusLi(e));
 
-                        li.setAttribute('tabindex', '0');
+                    if (data[i]['type'] === 'Москва и область') {
                         li.innerText =
                             '- ' + data[i]['id'] + ') ' + data[i]['address'];
                         li.title = data[i]['client'];
@@ -267,9 +272,6 @@ const CenterSide = (props) => {
                         varForBalloonContentBodyAndHintContent =
                             data[i]['client'];
                     } else {
-                        const li = document.createElement('li');
-                        const hr = document.createElement('hr');
-                        li.setAttribute('tabindex', '0');
                         li.innerText =
                             '- ' + data[i]['id'] + ') ' + data[i]['address'];
                         li.title = data[i]['info'];
@@ -280,6 +282,62 @@ const CenterSide = (props) => {
                     }
                 }
 
+                // function addListenerMulti(element, eventNames, listener) {
+                //     let events = eventNames.split(' ');
+                //     for (let i = 0, iLen = events.length; i < iLen; i++) {
+                //         element.addEventListener(events[i], listener, false);
+                //     }
+                // }
+
+                // вынужденная глобальная переменная
+                let startPreset;
+
+                const hendleFocusLi = (event) => {
+                    if ((event.target.hasFocus === true)) {
+                        return;
+                    }
+                    event.target.hasFocus = true;
+                    const num = event.target.id;
+                    let iterator = myCollection.getIterator(),
+                        object;
+
+                    while (
+                        (object = iterator.getNext()) !==
+                        iterator.STOP_ITERATION
+                    ) {
+                        if (
+                            object.geometry.getType() === 'Point' &&
+                            num === object.properties.get('iconContent')
+                        ) {
+                                startPreset = object.options.get('preset');
+                                object.options.set('preset', 'islands#greenIcon');
+                                break;
+                         }
+                    }
+                };
+
+                const hendleUnFocusLi = (event) => {
+                    if (event.target.hasFocus === false) {
+                        return;
+                    }
+                    event.target.hasFocus = false;
+                    const num = event.target.id;
+                    let iterator = myCollection.getIterator(),
+                        object;
+
+                    while (
+                        (object = iterator.getNext()) !==
+                        iterator.STOP_ITERATION
+                    ) {
+                        if (
+                            object.geometry.getType() === 'Point' &&
+                            num === object.properties.get('iconContent') 
+                        ) {
+                            object.options.set('preset', startPreset);
+                            break;
+                        }
+                    }
+                };                
 
                 // let varForBalloonContentBodyAndHintContent;
                 // заполнение меток совйствами и складывание их в колллекцию
@@ -432,8 +490,8 @@ const CenterSide = (props) => {
                     subscribePlacemarkClick(tempArr);
                 })()
 
-
                 function hendleClickPlacemark(e) {
+                    
                     let object = e.get('target');
                     object.properties._data.activeFlag =
                         !object.properties._data.activeFlag;
@@ -491,7 +549,6 @@ const CenterSide = (props) => {
                 newMap.setBounds(myCollection.getBounds());
 
                 rightButton.events.add('click', () => {
-                    // тут надо наоборт перебирав итератор добавлять элементы в pointsSelected
                     pointsSelected.sort().forEach(
                         (element) => {
                             // Найдем в коллекции геообъект с геометрией "Point".
@@ -517,6 +574,7 @@ const CenterSide = (props) => {
                                         'preset',
                                         'islands#grayCircleIcon'
                                     );
+                                    object.balloon.close();
                                     break;
                                 }
                             }

@@ -143,3 +143,9 @@ body {
 .calculator {
   font-weight: 600;
 }
+
+ul li:hover {
+  background-color: #aaa;
+/* text-decoration: underline; */
+/* font-weight: bold; */
+}
