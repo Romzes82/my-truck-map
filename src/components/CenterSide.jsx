@@ -222,14 +222,14 @@ const CenterSide = (props) => {
                                         object.geometry.getType() === 'Point' &&
                                         element === object.properties.get('iconContent')
                                     ) {
-                                        let tempPreset = data[element-1]['preset']; //object.options.get('preset');
+                                        // let tempPreset = data[element-1]['preset']; //object.options.get('preset');
                                         object.options.set(
                                             'preset',
-                                            tempPreset
+                                            data[element - 1]['preset']
+                                            // tempPreset
                                             // data[element]['preset']
                                         );
                                         object.properties._data.activeFlag = false;
-                                        // alert(object.options.get('preset'));
                                         break;
                                     }
                                 }
@@ -342,7 +342,6 @@ const CenterSide = (props) => {
                             }
                         )
                     );
-                    console.log(i, data[i]['preset']);
                 }
 
                 // сюда еще повесим калькулятор
@@ -380,6 +379,7 @@ const CenterSide = (props) => {
                                                                 'iconContent'
                                                             )
                                                     ) {
+                                                        object.properties._data.activeFlag = false;
                                                         object.events.add(['click'], hendleClickPlacemark)
                                                         // alert(object.options.get('preset'));
                                                         break;
@@ -394,7 +394,6 @@ const CenterSide = (props) => {
                     numbersOfPoints
                         .sort()
                         .forEach((element) => {
-                            // Найдем в коллекции геообъект с геометрией "Point".
                             let iterator =
                                     myCollection.getIterator(),
                                 object;
@@ -408,7 +407,6 @@ const CenterSide = (props) => {
                                     // true
                                     object.geometry.getType() ===
                                         'Point' &&
-                                    // object.options.get('preset') === 'islands#redIcon'
                                     element ===
                                         object.properties.get(
                                             'iconContent'
@@ -435,11 +433,30 @@ const CenterSide = (props) => {
                 })()
 
 
-                // TEST- done ---------------------------------------------
                 function hendleClickPlacemark(e) {
                     let object = e.get('target');
+                    object.properties._data.activeFlag =
+                        !object.properties._data.activeFlag;
+                    const tempPreset =
+                        object.properties._data.typeDelivery ===
+                        'Москва и область'
+                            ? 'islands#blueIcon'
+                            : 'islands#redIcon';
+                    
+                    if (object.properties._data.activeFlag === false) {
+                        object.options.set('preset', tempPreset);
+                        pointsSelected = pointsSelected.filter(
+                            (number) =>
+                                number !== object.properties._data.iconContent
+                        );
+                    } else {
+                        object.options.set('preset', 'islands#nightCircleIcon');
+                        pointsSelected.push(
+                            object.properties._data.iconContent
+                        );
+                    }
 
-                    if (!object.properties._data.activeFlag) {
+                    if (object.properties._data.activeFlag) {
                         operand = 1;
                     } else {
                         operand = -1;
@@ -447,9 +464,6 @@ const CenterSide = (props) => {
                     let rez = '';
                     calc[0].innerHTML = '';
 
-                    console.log(object.properties._data.activeFlag);
-                    console.log(object.properties._data.iconContent);
-                    //если флаг активный, то суммируем
                     sum_kg = sum_kg + object.properties._data.weight * operand;
                     sum_kub =
                         sum_kub +
@@ -466,35 +480,8 @@ const CenterSide = (props) => {
                         ) *
                             operand;
                     sum_val_in_pal = sum_val_in_pal.toFixed(1) * 1;
-                    console.log(
-                        sum_kg,
-                        sum_kub,
-                        sum_pal,
-                        '(',
-                        sum_val_in_pal,
-                        ')'
-                    );
                     rez = `${sum_kg} кг | ${sum_kub} м3 | ${sum_pal} пал ( ${sum_val_in_pal} м3)`;
                     calc[0].innerHTML += rez;
-                    // const arr.push(object.properties._data.iconContent)
-
-                    // массив для сбора выбранных меток в массив
-                    pointsSelected.push(object.properties._data.iconContent);
-
-                    if (object.properties._data.activeFlag === true) {
-                        object.properties._data.activeFlag = false;
-                        if (
-                            object.properties._data.typeDelivery ===
-                            'Москва и область'
-                        ) {
-                            object.options.set('preset', 'islands#blueIcon');
-                        } else {
-                            object.options.set('preset', 'islands#redIcon');
-                        }
-                    } else {
-                        object.properties._data.activeFlag = true;
-                        object.options.set('preset', 'islands#nightCircleIcon');
-                    }
                 }
 
                 // Добавление коллекции на карту.
@@ -503,59 +490,37 @@ const CenterSide = (props) => {
                 // Устанавливаем центр и масштаб карты так, чтобы отобразить всю коллекцию целиком.
                 newMap.setBounds(myCollection.getBounds());
 
-                // const log = document.getElementById('log');
                 rightButton.events.add('click', () => {
+                    // тут надо наоборт перебирав итератор добавлять элементы в pointsSelected
                     pointsSelected.sort().forEach(
                         (element) => {
-                                                        // Найдем в коллекции геообъект с геометрией "Point".
-                                                        let iterator =
-                                                                myCollection.getIterator(),
-                                                            object;
-                                                        element =
-                                                            element.trim();
-                                                        while (
-                                                            (object =
-                                                                iterator.getNext()) !==
-                                                            iterator.STOP_ITERATION
-                                                        ) {
-                                                            // alert(
-                                                            //     "point " + object.geometry.getType() + ", " + element + "===" +
-                                                            //         object.properties.get('iconContent')
-                                                            // );
-                                                            if (
-                                                                // true
-                                                                object.geometry.getType() ===
-                                                                    'Point' &&
-                                                                // object.options.get('preset') === 'islands#redIcon'
-                                                                element ===
-                                                                    object.properties.get(
-                                                                        'iconContent'
-                                                                    )
-                                                            ) {
-                                                                // let tempPreset =
-                                                                //     data[
-                                                                //         element
-                                                                //     ]['preset']; //object.options.get('preset');
-                                                                // alert(
-                                                                //     tempPreset
-                                                                // );
-                                                                console.log(
-                                                                    'done ' +
-                                                                        object.properties.get(
-                                                                            'iconContent'
-                                                                        ) +
-                                                                        ', el =' +
-                                                                        element
-                                                                );
-                                                                object.options.set(
-                                                                    'preset',
-                                                                    'islands#grayCircleIcon'
-                                                                );
-                                                                // alert(object.options.get('preset'));
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
+                            // Найдем в коллекции геообъект с геометрией "Point".
+                            let iterator =
+                                    myCollection.getIterator(),
+                                object;
+                            element =
+                                element.trim();
+                            while (
+                                (object =
+                                    iterator.getNext()) !==
+                                iterator.STOP_ITERATION
+                            ) {
+                                if (
+                                    object.geometry.getType() ===
+                                        'Point' &&
+                                    element ===
+                                        object.properties.get(
+                                            'iconContent'
+                                        )
+                                ) {
+                                    object.options.set(
+                                        'preset',
+                                        'islands#grayCircleIcon'
+                                    );
+                                    break;
+                                }
+                            }
+                        }
                     );
                     UnSubscribePlacemarkClick(pointsSelected);
                     addTruck(pointsSelected);
@@ -564,8 +529,8 @@ const CenterSide = (props) => {
                     sum_pal = 0;
                     sum_val_in_pal = 0;
                     calc[0].innerHTML = `0 кг | 0 м3 | 0 пал ( 0 м3)`;
-                    // myCollection.events.remove('click', MyClick);
                 });
+
             });
         } catch (error) {
             console.log('error is', error);
