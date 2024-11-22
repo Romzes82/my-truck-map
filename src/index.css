@@ -15,10 +15,6 @@ body {
     height: 100vh;
 }
 
-/* main {
-    flex: 1;
-} */
-
 .conteiner {
   position: relative;
   width: 100%;
@@ -57,9 +53,6 @@ body {
   padding: 3px;
 }
 
-/* .nav-wrapper {
-  height: 5%;
-} */
 .header_center_side {
     background-color: rgb(245, 245, 245);
     display: grid;
@@ -93,31 +86,10 @@ body {
   height: 93vh;
 }
 
-/* #log {
-    width: 240px;
-    margin: 0 auto;
-    height: 30px;
-    position: fixed;
-    left: 330px;
-    top: 30px;
-    font-family: Courier, sans-serif;
-    font-size: 22px;
-    font-style: italic;
-    font-weight: 800;
-    color: #0e284a;
-    background-color: #b8dbb8; 
-    overflow: auto;
-    opacity: 0.8; /* Полупрозрачность элемента */
-/* } */
-
 .truck {
   justify-self: end;
   cursor: pointer;
   padding-top: 0.3rem;
-}
-
-.truck-quantity {
-
 }
 
 .trucks-list {

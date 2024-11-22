@@ -12,10 +12,6 @@ const TrucksItem = (props) => {
     }
     // console.log(customRound(2.675, 2)); // 2.68, совершенная точность!
 
-    function calc(key) {
-        item.reduce();
-    }
-
     // console.log('calc(value)' + calc('value')());
 
     return (
