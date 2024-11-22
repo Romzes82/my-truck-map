@@ -10,23 +10,12 @@ const TrucksItem = (props) => {
     function customRound(value, decimals) {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     }
-    console.log(customRound(2.675, 2)); // 2.68, совершенная точность!
+    // console.log(customRound(2.675, 2)); // 2.68, совершенная точность!
 
     function calc(key) {
         item.reduce();
     }
 
-    const totalKG = item.reduce(
-        // Аргумент sum является аккумулятором,
-        // в нём храним промежуточное значение
-        function (sum, currentAccount) {
-            // Каждую итерацию берём текущее значение
-            // и складываем его с количеством денег
-            // на текущем счету
-            return sum + currentAccount['weight'] * 1;
-        },
-        0 // Начальное значение аккумулятора
-    );
     // console.log('calc(value)' + calc('value')());
 
     return (

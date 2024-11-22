@@ -8,29 +8,32 @@ const TrucksList = (props) => {
         removeTruck = Function.prototype,
     } = props;
     // [[{id:1},{id:2}] , [{id:3},{id:4}]]
-    console.log('in TrucksList ' + trucks.length);
+    // console.log('in TrucksList ' + trucks.length);
     return (
         <div>
             <ul className="collection with-header trucks-list">
                 <li className="collection-header active">
-                    <h4>Список авто</h4>
+                    <h2 className='collection-header-title'>Список авто</h2>
                 </li>
-                {trucks.length ? (
-                    trucks.map((item, index) => {
-                        console.log('---');
-                        console.log(item);
-                        return (
-                            <TrucksItem
-                                key={index}
-                                item={item}
-                                index={index}
-                                removeTruck={removeTruck}
-                            />
-                        );
-                    })
-                ) : (
-                    <li className="collection-item">Список пуст</li>
-                )}
+                <div className="trucks-list-scroll">
+                    {trucks.length ? (
+                        trucks.map((item, index) => {
+                            // console.log('---');
+                            // console.log(item);
+                            return (
+                                <TrucksItem
+                                    key={index}
+                                    item={item}
+                                    index={index}
+                                    removeTruck={removeTruck}
+                                />
+                            );
+                        })
+                    ) : (
+                        <li className="collection-item">Список пуст</li>
+                    )}
+                </div>
+
                 <i
                     className="material-icons trucks-list-close"
                     onClick={handleModalTrucksShow}

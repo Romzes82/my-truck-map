@@ -1,38 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_MAP_KEY, API_MAP_URL } from '../config';
 import HeaderMap from './HeaderMap';
-import Trucks from './Trucks';
 import TrucksList from './TrucksList';
-
-const mok = [
-    {
-        id: '1',
-        latitude: '55,654427',
-        longitude: '37,552085',
-        weight: '762',
-        volume: '2,2',
-        pallet: '0',
-        info: 'Москва, Научный проезд, д. 20, стр.4, Тел. 8-916-028-48-52 Аллексей, до 15-00 ',
-        type: 'Москва и область',
-        address: 'Москва, Научный проезд, д. 20, стр.4',
-        client: 'ООО _ДНК-Технология ТС_',
-        volumeInPallet: '2,2',
-    },
-    {
-        id: '2',
-        latitude: '55,595689',
-        longitude: '37,357789',
-        weight: '1199',
-        volume: '4,1',
-        pallet: '0',
-        info: 'Москва г, Московский п, Хабарова ул, д 9.  до 14!!! Москва г, Московский п, Хабарова ул, дом № Домов 9, Склад работает с 8.30 до 17.00 8926-097-50-15 Наталья  ',
-        type: 'Москва и область',
-        address: 'Москва г, Московский п, Хабарова ул, д 9',
-        client: 'ООО _ТД ВИКТОРИЯ_',
-        volumeInPallet: '4,1',
-    },
-];
-const mok_pointsSelected = [1, 2];
 
 const CenterSide = (props) => {
  
@@ -43,16 +12,9 @@ const CenterSide = (props) => {
      
     // https://www.mousedc.ru/learning/522-massiv-steyt-react/?ysclid=m3hcvf4nps534188601
     const [isLoadedScriptApi, setIsLoadedScriptApi] = useState(false);
-    // const [pointsSelected, SetPointsSelected] = useState([]); // состояние-массив точек для отпраки в одну авто? - просто [1, 5, 10]
     const [trucks, setTracks] = useState([]); // состояние-массив объектов "авто" со своими точками. Оно будет в модалке от клика по Тракс
-    const [varPreset, setVarPreset] = useState();
 
     let pointsSelected=[];
-    //  Оно же и будет в LocalStorage.
-    // т.е. понадобятся:
-    // - функция удаления элемента(фильтр). Возможно удаления сразу нескольких элементов.
-    // - функция добавения элемента. Хендлер кнопки Send
-    // все они задействуют setListTracks
 
     const [isModalTrucksShow, setModalTrucksShow] = useState(false);
 
@@ -60,47 +22,9 @@ const CenterSide = (props) => {
         setModalTrucksShow(!isModalTrucksShow);
     };
     
-    // useEffect(() => {
-    //     console.log('Я вызовусь только при изменении valueA');
-    //      console.log(pointsSelected.length);
-    // }, [pointsSelected]);
-
-    // получается quantity - это и будет кол-во МАШИН(о проще брать из length), а truck - это массив чисел pointsSelected выбранных точек
-    // truck - pointsSelected ?
-    // [ {1},{5},{10}, {2},{4},{9} ] - trucks на выходе
-    // [ {2,4,9} ] - truck
-    // ее никуда прокидвыать не надо, она привязана к карте, кнопка Send
-    // const addTruck = (truck) => {
-    //     const newTruck = truck.map((point) => {
-    //         return {
-    //             ...point,
-    //             cuantity: trucks.length + 1,
-    //         };
-    //     });
-    //     setTracks([...trucks, newTruck]);
-    // };
-
-    function asd(e) {
-        // let object = e.get('target');
-        // let iterator = window.ymaps.geoObjects.GeoObjectCollection.myCollection.getIterator();
-        // let lengthCol = e.current.target;
-        // _sourceEvent._sourceEvent.originalEvent.target._data.properties._data
-        // ООО _ДНК-Технология ТС_
-        console.log(
-            e._sourceEvent._sourceEvent.originalEvent.target._data.properties
-                ._data.varHintAndBody
-        );
-    }
-
     const addTruck = () => {
         if (pointsSelected.length === 0) return;
-        // SetPointsSelected([1, 2]);
-        //  console.log('trucks ' + trucks);
-        // ??? УТОЧНИТЬ как обновиться стейт
         const newTruck = pointsSelected.map((point) => {
-            // console.log('point ' + point);
-            // if (!data[point - 1].cuantity)
-            //     data[point - 1].cuantity = trucks.length; // этого ключа еще ни у кого нет
             return {
                 ...data[point - 1],
                 // cuantity: data[point - 1].cuantity + 1,
@@ -109,18 +33,8 @@ const CenterSide = (props) => {
         console.log('newTruck ' + newTruck[0].client);
         setTracks(trucks => [...trucks, newTruck]);
 
-        // обнуляем pointsSelected
-        // SetPointsSelected([]);
         pointsSelected=[];
-        //TODO и деактивируем метки на карте ...........
-    };
 
-    // клики по меткам обновляют pointsSelected через SetPointsSelected
-    const hendlePlacemark = (id) => {
-        // если метка стала активной(по таргету лучше), то добавляем ее в newPoints
-        // елси деактивировали, то удаляем
-        // либо это массив полных объектов, либо массив просто чисел. И из этих чисел затем каждый раз надо
-        // формировать инфо. Т.е. в trukcs иметь тоже просто
     };
 
     // функция удаления авто из списка авто. Серыми будут все метки с полем quantity <> 0
@@ -161,9 +75,6 @@ const CenterSide = (props) => {
                 const newMap = new window.ymaps.Map(
                         'customMap',
                         { center: [55.76, 37.64], zoom: 10, controls: [] }
-                        // {
-                        //     searchControlProvider: 'yandex#search',
-                        // }
                     ),
                     rightButton = new window.ymaps.control.Button('Send');
 
@@ -172,10 +83,6 @@ const CenterSide = (props) => {
                     selectOnClick: false,
                 });
 
-                // добавим метки из json
-                // for (var i = 0; i < data.length; i++) {
-
-                // }
                 const myCollection = new window.ymaps.GeoObjectCollection(
                     {},
                     {
@@ -191,7 +98,6 @@ const CenterSide = (props) => {
                     }
                 );
 
-   
                 const callbackForTruckDelete = (e) => {
                     if (
                         !e.target.parentElement.parentElement.id.match(
@@ -206,35 +112,35 @@ const CenterSide = (props) => {
                         .getElementById(IdTemp)
                         .getElementsByTagName('span')[0].textContent;
 
-                            const arr = arrStr.split(',');
-                            // сортировка т.к. будем иметь дело с итератором от 1 до ...
-                            arr.sort();
-                            arr.forEach((element) => {
-                                // Найдем в коллекции геообъект с геометрией "Ломаная линия".
-                                let iterator = myCollection.getIterator(),
-                                    object;
-                                element = element.trim();
-                                while (
-                                    (object = iterator.getNext()) !==
-                                    iterator.STOP_ITERATION
-                                ) {
-                                    if (
-                                        object.geometry.getType() === 'Point' &&
-                                        element === object.properties.get('iconContent')
-                                    ) {
-                                        // let tempPreset = data[element-1]['preset']; //object.options.get('preset');
-                                        object.options.set(
-                                            'preset',
-                                            data[element - 1]['preset']
-                                            // tempPreset
-                                            // data[element]['preset']
-                                        );
-                                        object.properties._data.activeFlag = false;
-                                        break;
-                                    }
-                                }
-                            })
-                            subscribePlacemarkClick(arr);
+                    const arr = arrStr.split(',');
+                    // сортировка т.к. будем иметь дело с итератором от 1 до ...
+                    arr.sort();
+                    arr.forEach((element) => {
+                        // Найдем в коллекции геообъект с геометрией "Ломаная линия".
+                        let iterator = myCollection.getIterator(),
+                            object;
+                        element = element.trim();
+                        while (
+                            (object = iterator.getNext()) !==
+                            iterator.STOP_ITERATION
+                        ) {
+                            if (
+                                object.geometry.getType() === 'Point' &&
+                                element === object.properties.get('iconContent')
+                            ) {
+                                // let tempPreset = data[element-1]['preset']; //object.options.get('preset');
+                                object.options.set(
+                                    'preset',
+                                    data[element - 1]['preset']
+                                    // tempPreset
+                                    // data[element]['preset']
+                                );
+                                object.properties._data.activeFlag = false;
+                                break;
+                            }
+                        }
+                    });
+                    subscribePlacemarkClick(arr);
                 };
 
                 // найдем на странице списки левый и правый
@@ -248,18 +154,18 @@ const CenterSide = (props) => {
                     'myListDeliveryRight'
                 );
 
-
                 let varForBalloonContentBodyAndHintContent;
-    
+
                 //заполняем левый и правый списки
                 for (let i = 0; i < data.length; i++) {
                     const li = document.createElement('li');
-                    li.id = i+1
+                    li.id = i + 1;
                     const hr = document.createElement('hr');
                     li.setAttribute('tabindex', '0');
                     li.addEventListener('focus', (e) => hendleFocusLi(e));
                     li.addEventListener('blur', (e) => hendleUnFocusLi(e));
                     // пока отключил из-за конфликта закрашиваний
+                    // похоже решение конфликта можно осуществить через type = e.get('type');
                     // li.addEventListener('mouseover', (e) => hendleFocusLi(e));
                     // li.addEventListener('mouseout', (e) => hendleUnFocusLi(e));
 
@@ -282,18 +188,11 @@ const CenterSide = (props) => {
                     }
                 }
 
-                // function addListenerMulti(element, eventNames, listener) {
-                //     let events = eventNames.split(' ');
-                //     for (let i = 0, iLen = events.length; i < iLen; i++) {
-                //         element.addEventListener(events[i], listener, false);
-                //     }
-                // }
-
-                // вынужденная глобальная переменная
+                // вынужденно объявленная глобальная переменная
                 let startPreset;
 
                 const hendleFocusLi = (event) => {
-                    if ((event.target.hasFocus === true)) {
+                    if (event.target.hasFocus === true) {
                         return;
                     }
                     event.target.hasFocus = true;
@@ -309,10 +208,10 @@ const CenterSide = (props) => {
                             object.geometry.getType() === 'Point' &&
                             num === object.properties.get('iconContent')
                         ) {
-                                startPreset = object.options.get('preset');
-                                object.options.set('preset', 'islands#greenIcon');
-                                break;
-                         }
+                            startPreset = object.options.get('preset');
+                            object.options.set('preset', 'islands#greenIcon');
+                            break;
+                        }
                     }
                 };
 
@@ -331,20 +230,19 @@ const CenterSide = (props) => {
                     ) {
                         if (
                             object.geometry.getType() === 'Point' &&
-                            num === object.properties.get('iconContent') 
+                            num === object.properties.get('iconContent')
                         ) {
                             object.options.set('preset', startPreset);
                             break;
                         }
                     }
-                };                
+                };
 
-                // let varForBalloonContentBodyAndHintContent;
                 // заполнение меток совйствами и складывание их в колллекцию
                 for (let i = 0; i < data.length; i++) {
                     if (data[i]['type'] === 'Москва и область') {
                         varForBalloonContentBodyAndHintContent =
-                        data[i]['client'];
+                            data[i]['client'];
                     } else {
                         varForBalloonContentBodyAndHintContent =
                             data[i]['type'];
@@ -402,11 +300,9 @@ const CenterSide = (props) => {
                     );
                 }
 
-                // сюда еще повесим калькулятор
-                // myCollection.events.add(['click'], asd);
                 //добавлеяем колбэк слушателя на коллекцию это для калькуляции и окраску+флаг активных меток
                 const calc = document.getElementsByClassName('calculator');
-                
+
                 let sum_kg = 0;
                 let sum_kub = 0;
                 let sum_pal = 0;
@@ -414,84 +310,66 @@ const CenterSide = (props) => {
                 let operand;
 
                 const subscribePlacemarkClick = (numbersOfPoints) => {
-                                        numbersOfPoints
-                                            .sort()
-                                            .forEach((element) => {
-                                                // Найдем в коллекции геообъект с геометрией "Point".
-                                                let iterator =
-                                                        myCollection.getIterator(),
-                                                    object;
-                                                element = element.trim();
-                                                while (
-                                                    (object =
-                                                        iterator.getNext()) !==
-                                                    iterator.STOP_ITERATION
-                                                ) {
-                                                    if (
-                                                        // true
-                                                        object.geometry.getType() ===
-                                                            'Point' &&
-                                                        // object.options.get('preset') === 'islands#redIcon'
-                                                        element ===
-                                                            object.properties.get(
-                                                                'iconContent'
-                                                            )
-                                                    ) {
-                                                        object.properties._data.activeFlag = false;
-                                                        object.events.add(['click'], hendleClickPlacemark)
-                                                        // alert(object.options.get('preset'));
-                                                        break;
-                                                    }
-                                                }
-                                            });
-                }
-
-                const UnSubscribePlacemarkClick = (
-                    numbersOfPoints
-                ) => {
-                    numbersOfPoints
-                        .sort()
-                        .forEach((element) => {
-                            let iterator =
-                                    myCollection.getIterator(),
-                                object;
-                            element = element.trim();
-                            while (
-                                (object =
-                                    iterator.getNext()) !==
-                                iterator.STOP_ITERATION
+                    numbersOfPoints.sort().forEach((element) => {
+                        // Найдем в коллекции геообъект с геометрией "Point".
+                        let iterator = myCollection.getIterator(),
+                            object;
+                        element = element.trim();
+                        while (
+                            (object = iterator.getNext()) !==
+                            iterator.STOP_ITERATION
+                        ) {
+                            if (
+                                object.geometry.getType() === 'Point' &&
+                                element === object.properties.get('iconContent')
                             ) {
-                                if (
-                                    // true
-                                    object.geometry.getType() ===
-                                        'Point' &&
-                                    element ===
-                                        object.properties.get(
-                                            'iconContent'
-                                        )
-                                ) {
-                                    object.events.remove(
-                                        'click',
-                                        hendleClickPlacemark
-                                    );
-                                    break;
-                                }
+                                
+                                object.properties._data.activeFlag = false;
+                                object.events.add(
+                                    ['click'],
+                                    hendleClickPlacemark
+                                );
+                                break;
                             }
-                        });
+                        }
+                    });
+                };
+
+                const UnSubscribePlacemarkClick = (numbersOfPoints) => {
+                    numbersOfPoints.sort().forEach((element) => {
+                        let iterator = myCollection.getIterator(),
+                            object;
+                        element = element.trim();
+                        while (
+                            (object = iterator.getNext()) !==
+                            iterator.STOP_ITERATION
+                        ) {
+                            if (
+                                // true
+                                object.geometry.getType() === 'Point' &&
+                                element === object.properties.get('iconContent')
+                            ) {
+                                object.events.remove(
+                                    'click',
+                                    hendleClickPlacemark
+                                );
+                                break;
+                            }
+                        }
+                    });
                 };
 
                 // стартовая инициализация подписки всех меток коллекции
                 const lengthCol = myCollection.getLength();
-                (() => { 
-                    let tempArr =[];
-                    for (let i = 1; i <= lengthCol; i++) { 
-                        tempArr.push("" + i)
+                (() => {
+                    let tempArr = [];
+                    for (let i = 1; i <= lengthCol; i++) {
+                        tempArr.push('' + i);
                     }
                     subscribePlacemarkClick(tempArr);
-                })()
+                })();
 
                 function hendleClickPlacemark(e) {
-                    
                     let object = e.get('target');
                     object.properties._data.activeFlag =
                         !object.properties._data.activeFlag;
@@ -500,7 +378,7 @@ const CenterSide = (props) => {
                         'Москва и область'
                             ? 'islands#blueIcon'
                             : 'islands#redIcon';
-                    
+
                     if (object.properties._data.activeFlag === false) {
                         object.options.set('preset', tempPreset);
                         pointsSelected = pointsSelected.filter(
@@ -544,42 +422,33 @@ const CenterSide = (props) => {
 
                 // Добавление коллекции на карту.
                 newMap.geoObjects.add(myCollection);
-                // setupControls(newMap, myCollection);
+
                 // Устанавливаем центр и масштаб карты так, чтобы отобразить всю коллекцию целиком.
                 newMap.setBounds(myCollection.getBounds());
 
                 rightButton.events.add('click', () => {
-                    pointsSelected.sort().forEach(
-                        (element) => {
-                            // Найдем в коллекции геообъект с геометрией "Point".
-                            let iterator =
-                                    myCollection.getIterator(),
-                                object;
-                            element =
-                                element.trim();
-                            while (
-                                (object =
-                                    iterator.getNext()) !==
-                                iterator.STOP_ITERATION
+                    pointsSelected.sort().forEach((element) => {
+                        // Найдем в коллекции геообъект с геометрией "Point".
+                        let iterator = myCollection.getIterator(),
+                            object;
+                        element = element.trim();
+                        while (
+                            (object = iterator.getNext()) !==
+                            iterator.STOP_ITERATION
+                        ) {
+                            if (
+                                object.geometry.getType() === 'Point' &&
+                                element === object.properties.get('iconContent')
                             ) {
-                                if (
-                                    object.geometry.getType() ===
-                                        'Point' &&
-                                    element ===
-                                        object.properties.get(
-                                            'iconContent'
-                                        )
-                                ) {
-                                    object.options.set(
-                                        'preset',
-                                        'islands#grayCircleIcon'
-                                    );
-                                    object.balloon.close();
-                                    break;
-                                }
+                                object.options.set(
+                                    'preset',
+                                    'islands#grayCircleIcon'
+                                );
+                                object.balloon.close();
+                                break;
                             }
                         }
-                    );
+                    });
                     UnSubscribePlacemarkClick(pointsSelected);
                     addTruck(pointsSelected);
                     sum_kg = 0;
@@ -588,7 +457,6 @@ const CenterSide = (props) => {
                     sum_val_in_pal = 0;
                     calc[0].innerHTML = `0 кг | 0 м3 | 0 пал ( 0 м3)`;
                 });
-
             });
         } catch (error) {
             console.log('error is', error);
@@ -603,6 +471,7 @@ const CenterSide = (props) => {
             // мап коллекцию меток
             // coords = data;
         }
+        // eslint-disable-next-line
     }, [isLoadedScriptApi]);
 
     return (
@@ -611,7 +480,6 @@ const CenterSide = (props) => {
                 <HeaderMap
                     quantity={trucks.length}
                     handleModalTrucksShow={handleModalTrucksShow}
-                    asd={asd}
                 />
                 {isModalTrucksShow && (
                     <TrucksList
