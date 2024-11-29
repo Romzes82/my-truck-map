@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/my-truck-map/static/css/main.80e857c4.css",
-    "main.js": "/my-truck-map/static/js/main.de1d6d78.js",
+    "main.css": "/my-truck-map/static/css/main.1e92f225.css",
+    "main.js": "/my-truck-map/static/js/main.b53e0d7f.js",
     "index.html": "/my-truck-map/index.html",
-    "main.80e857c4.css.map": "/my-truck-map/static/css/main.80e857c4.css.map",
-    "main.de1d6d78.js.map": "/my-truck-map/static/js/main.de1d6d78.js.map"
+    "main.1e92f225.css.map": "/my-truck-map/static/css/main.1e92f225.css.map",
+    "main.b53e0d7f.js.map": "/my-truck-map/static/js/main.b53e0d7f.js.map"
   },
   "entrypoints": [
-    "static/css/main.80e857c4.css",
-    "static/js/main.de1d6d78.js"
+    "static/css/main.1e92f225.css",
+    "static/js/main.b53e0d7f.js"
   ]
 }
